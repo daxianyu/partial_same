@@ -1,0 +1,23 @@
+{
+  "name": "partial_same",
+  "version": "1.0.0",
+  "description": "deeply compare with include and exclude keymap",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/__test.js",
+    "start": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daxianyu/partial_same.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daxianyu/partial_same/issues"
+  },
+  "homepage": "https://github.com/daxianyu/partial_same#readme",
+  "devDependencies": {
+    "typescript": "^2.6.0"
+  }
+}
