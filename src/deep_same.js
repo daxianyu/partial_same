@@ -42,7 +42,7 @@ function isMatchWordPattern(reg, toCp) {
     return false;
 }
 exports.isMatchWordPattern = isMatchWordPattern;
-function isMatchKeymapPattern(reg, toCp) {
+function isMatchKeymapPattern(reg, toCp, isContained) {
     if (reg === '**')
         return true;
     var regList = reg.split('.');
@@ -52,6 +52,8 @@ function isMatchKeymapPattern(reg, toCp) {
         if (regList[regCursor].indexOf('*') > -1) {
             if (regList[regCursor] === '**') {
                 cpCursor++;
+                if (cpCursor === cpStrList.length && regCursor === regList.length - 1)
+                    return true;
             }
             else if (isMatchWordPattern(regList[regCursor], cpStrList[cpCursor])) {
                 cpCursor++;
@@ -69,10 +71,17 @@ function isMatchKeymapPattern(reg, toCp) {
             return false;
         }
     }
+    if (isContained) {
+        return cpCursor <= cpStrList.length && regCursor >= regList.length;
+    }
     return (cpCursor >= cpStrList.length || regCursor >= regList.length);
 }
 exports.isMatchKeymapPattern = isMatchKeymapPattern;
-function isContainedOrMayContain(arr, str, context) {
+function isContained(arr, str, context) {
+    return isContainedOrMayContain(arr, str, context, true);
+}
+exports.isContained = isContained;
+function isContainedOrMayContain(arr, str, context, isContain) {
     var nextContext = (context ? context + '.' : '') + str;
     for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
         var dirs = arr_1[_i];
@@ -83,14 +92,14 @@ function isContainedOrMayContain(arr, str, context) {
                 if (dirs.substr(2) === str)
                     return true;
             }
-            if (isMatchKeymapPattern(dirs, nextContext)) {
+            if (isMatchKeymapPattern(dirs, nextContext, isContain)) {
                 return true;
             }
         }
         else {
             if (dirs !== '' && dirs === nextContext)
                 return true;
-            if (context.indexOf(dirs) === 0)
+            if (context.indexOf(dirs) === 0 || nextContext.indexOf(dirs) === 0)
                 return true;
             if (dirs.indexOf(context) === 0 && dirs[nextContext.length] === '.') {
                 var left = dirs.substr(context.length);
@@ -171,7 +180,7 @@ function ifSomeMatch(regList, key, context) {
     return false;
 }
 exports.ifSomeMatch = ifSomeMatch;
-function isDeepSame(o1, o2, include, exclude, context) {
+function isPartialSame(o1, o2, include, exclude, context) {
     if (o1 === o2) {
         return true;
     }
@@ -188,7 +197,7 @@ function isDeepSame(o1, o2, include, exclude, context) {
                     continue;
                 if (exclude && exclude.length && ifSomeMatch(exclude, i.toString(), context || ''))
                     continue;
-                if (!isDeepSame(o1[i], o2[i], include, exclude, (context ? context + '.' : '') + i)) {
+                if (!isPartialSame(o1[i], o2[i], include, exclude, (context ? context + '.' : '') + i)) {
                     return false;
                 }
             }
@@ -203,7 +212,7 @@ function isDeepSame(o1, o2, include, exclude, context) {
                 if (exclude && exclude.length && ifSomeMatch(exclude, key, context || ''))
                     continue;
                 if (o1.hasOwnProperty(key)) {
-                    if (!isDeepSame(o1[key], o2[key], include, exclude, (context ? context + '.' : '') + key)) {
+                    if (!isPartialSame(o1[key], o2[key], include, exclude, (context ? context + '.' : '') + key)) {
                         return false;
                     }
                 }
@@ -211,7 +220,17 @@ function isDeepSame(o1, o2, include, exclude, context) {
         }
         return true;
     }
+    else {
+        if (include && include.length) {
+            if (isContained(include, context || '', '')) {
+                return o1 === o2;
+            }
+            else {
+                return true;
+            }
+        }
+    }
     return false;
 }
-exports.isDeepSame = isDeepSame;
+exports.isPartialSame = isPartialSame;
 //# sourceMappingURL=deep_same.js.map

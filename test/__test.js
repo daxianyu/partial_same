@@ -32,25 +32,27 @@ var o1 = {
     y: [1, 2, 3, 4],
     z: 4
 };
-console.log(deep_same_1.isDeepSame(o1.z, o2.z, [], []) === false);
-console.log(deep_same_1.isDeepSame(o1.y, o2.y, [], []) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.**'], ['x.d']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.b'], ['x.b.*']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.b'], []) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.b.*'], ['x.b.0']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.d.**'], ['x.d']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.d.**'], ['x.**.r']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.d.**'], ['x.*.*.r']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['*'], ['x', 'z']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x'], ['x.b']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x'], ['x.b', 'x.d']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x'], ['x.b', 'x.d.*.t']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x'], ['x.b', 'x.d.a.t']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.*'], ['x.b']) === false);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d.*.t']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d.a.t']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['x.d'], ['x.**.t']) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['y'], []) === true);
-console.log(deep_same_1.isDeepSame(o1, o2, ['*'], ['x', 'z']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x', 'y'], ['x.**.t']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.d.a'], ['x.**.t']) === true);
+console.log(deep_same_1.isPartialSame(o1.z, o2.z, [], []) === false);
+console.log(deep_same_1.isPartialSame(o1.y, o2.y, [], []) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.**'], ['x.d']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.b'], ['x.b.*']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.b'], []) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.b.*'], ['x.b.0']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.d.**'], ['x.d']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.d.**'], ['x.**.r']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.d.**'], ['x.*.*.r']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['*'], ['x', 'z']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x'], ['x.b']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x'], ['x.b', 'x.d']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x'], ['x.b', 'x.d.*.t']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x'], ['x.b', 'x.d.a.t']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.*'], ['x.b']) === false);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d.*.t']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d.a.t']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['x.d'], ['x.**.t']) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['y'], []) === true);
+console.log(deep_same_1.isPartialSame(o1, o2, ['*'], ['x', 'z']) === true);
 //# sourceMappingURL=__test.js.map

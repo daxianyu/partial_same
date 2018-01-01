@@ -1,4 +1,4 @@
-import { isDeepSame } from '../src/deep_same'
+import { isPartialSame } from '../src/deep_same'
 
 let o1 = {
     x: {
@@ -32,25 +32,28 @@ let o1 = {
     z: 4
 }
 
-console.log(isDeepSame(o1.z, o2.z, [], [])===false)
-console.log(isDeepSame(o1.y, o2.y, [], [])===true)
-console.log(isDeepSame(o1, o2, ['x.**'], ['x.d'])===false)
-console.log(isDeepSame(o1, o2, ['x.b'], ['x.b.*'])===true)
-console.log(isDeepSame(o1, o2, ['x.b'], [])===false)
-console.log(isDeepSame(o1, o2, ['x.b.*'], ['x.b.0'])===false)
-console.log(isDeepSame(o1, o2, ['x.d.**'], ['x.d'])===true)
-console.log(isDeepSame(o1, o2, ['x.d.**'], ['x.**.r'])===false)
-console.log(isDeepSame(o1, o2, ['x.d.**'], ['x.*.*.r'])===false)
-console.log(isDeepSame(o1, o2, ['*'], ['x', 'z'])===true)
-console.log(isDeepSame(o1, o2, ['x'], ['x.b'])===false)
-console.log(isDeepSame(o1, o2, ['x'], ['x.b', 'x.d'])===true)
-console.log(isDeepSame(o1, o2, ['x'], ['x.b', 'x.d.*.t'])===true)
-console.log(isDeepSame(o1, o2, ['x'], ['x.b', 'x.d.a.t'])===true)
-console.log(isDeepSame(o1, o2, ['x.*'], ['x.b'])===false)
-console.log(isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d'])===true)
-console.log(isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d.*.t'])===true)
-console.log(isDeepSame(o1, o2, ['x.*'], ['x.b', 'x.d.a.t'])===true)
-console.log(isDeepSame(o1, o2, ['x.d'], ['x.**.t'])===true)
-console.log(isDeepSame(o1, o2, ['y'], [])===true)
-console.log(isDeepSame(o1, o2, ['*'], ['x', 'z'])===true)
+
+console.log(isPartialSame(o1, o2, ['x', 'y'], ['x.**.t'])===false)
+console.log(isPartialSame(o1, o2, ['x.d.a'], ['x.**.t'])===true)
+console.log(isPartialSame(o1.z, o2.z, [], [])===false)
+console.log(isPartialSame(o1.y, o2.y, [], [])===true)
+console.log(isPartialSame(o1, o2, ['x.**'], ['x.d'])===false)
+console.log(isPartialSame(o1, o2, ['x.b'], ['x.b.*'])===true)
+console.log(isPartialSame(o1, o2, ['x.b'], [])===false)
+console.log(isPartialSame(o1, o2, ['x.b.*'], ['x.b.0'])===false)
+console.log(isPartialSame(o1, o2, ['x.d.**'], ['x.d'])===true)
+console.log(isPartialSame(o1, o2, ['x.d.**'], ['x.**.r'])===false)
+console.log(isPartialSame(o1, o2, ['x.d.**'], ['x.*.*.r'])===false)
+console.log(isPartialSame(o1, o2, ['*'], ['x', 'z'])===true)
+console.log(isPartialSame(o1, o2, ['x'], ['x.b'])===false)
+console.log(isPartialSame(o1, o2, ['x'], ['x.b', 'x.d'])===true)
+console.log(isPartialSame(o1, o2, ['x'], ['x.b', 'x.d.*.t'])===true)
+console.log(isPartialSame(o1, o2, ['x'], ['x.b', 'x.d.a.t'])===true)
+console.log(isPartialSame(o1, o2, ['x.*'], ['x.b'])===false)
+console.log(isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d'])===true)
+console.log(isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d.*.t'])===true)
+console.log(isPartialSame(o1, o2, ['x.*'], ['x.b', 'x.d.a.t'])===true)
+console.log(isPartialSame(o1, o2, ['x.d'], ['x.**.t'])===true)
+console.log(isPartialSame(o1, o2, ['y'], [])===true)
+console.log(isPartialSame(o1, o2, ['*'], ['x', 'z'])===true)
 

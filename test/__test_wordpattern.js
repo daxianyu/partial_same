@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var deep_same_1 = require("../src/deep_same");
-console.log(deep_same_1.isMatchWordPattern('a*x', 'aasadfasf') === true);
+console.log(deep_same_1.isMatchWordPattern('a*x', 'aasadfasf') === false);
 console.log(deep_same_1.isMatchWordPattern('*', 'a3') === true);
 console.log(deep_same_1.isMatchWordPattern('a*', 'a3') === true);
 console.log(deep_same_1.isMatchWordPattern('a*', 'aa3') === true);

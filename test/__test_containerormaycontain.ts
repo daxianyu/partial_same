@@ -1,6 +1,8 @@
 
 // /**
-import {isContainedOrMayContain} from "../src/deep_same";
+import {isContainedOrMayContain, isContained} from "../src/deep_same";
+
+console.log(isContained(['x.**.a'], '0', 'x.b') === false)
 
 console.log(isContainedOrMayContain(['x.b.c.d.e'], 'd', 'x.b.c.d.e') === true)
 console.log(isContainedOrMayContain(['x.b.*.d.e'], 'd', 'x.b.c.d.e') === true)
@@ -20,3 +22,4 @@ console.log(isContainedOrMayContain(['x.*.y', 'x.*.z'], 'p', 'x.b') === false)
 console.log(isContainedOrMayContain(['x.*.y', 'x.*.z'], 'z', 'x')===true)
 console.log(isContainedOrMayContain(['x.*.y', 'x.*.z'], 'x', '')===true)
 // */
+

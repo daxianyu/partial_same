@@ -38,7 +38,7 @@ export function isMatchWordPattern(reg:string, toCp: string):boolean{
  * a.*.b = a.b, a.b.b, a.c.b; != a.b.c, a.c.c.b
  * a.**.b = a.b.b a.
  * */
-export function isMatchKeymapPattern(reg:string, toCp:string):boolean {
+export function isMatchKeymapPattern(reg:string, toCp:string, isContained?:true):boolean {
     if(reg==='**') return true
     const regList = reg.split('.')
     const cpStrList = toCp.split('.')
@@ -47,6 +47,8 @@ export function isMatchKeymapPattern(reg:string, toCp:string):boolean {
         if(regList[regCursor].indexOf('*')>-1){
             if(regList[regCursor]==='**') {
                 cpCursor++;
+                // 最后一个字符匹配到的通配符恰好也是regList的最后一项，说明满足了
+                if(cpCursor === cpStrList.length && regCursor===regList.length - 1) return true
             } else if(isMatchWordPattern(regList[regCursor], cpStrList[cpCursor])){
                 cpCursor++;regCursor++
             } else {
@@ -59,13 +61,20 @@ export function isMatchKeymapPattern(reg:string, toCp:string):boolean {
             return false
         }
     }
+    if(isContained) {
+        // 在reg遍历结束，但cpStr未遍历尽就结束，则说明其是更深的层级
+        return cpCursor <= cpStrList.length && regCursor >= regList.length
+    }
     return (cpCursor >= cpStrList.length || regCursor >= regList.length)
 }
 
+export function isContained(arr: string[], str:string, context: string,):boolean{
+    return isContainedOrMayContain(arr, str, context, true)
+}
 /**
  * WildCards only support '*' and 'ppp.*.xxx'
  * */
-export function isContainedOrMayContain(arr: string[], str:string, context: string):boolean{
+export function isContainedOrMayContain(arr: string[], str:string, context: string, isContain?:true):boolean{
     const nextContext = (context ? context + '.': '') + str
     for(let dirs of arr) {
         if(dirs.indexOf('*')> -1 ) {
@@ -73,14 +82,14 @@ export function isContainedOrMayContain(arr: string[], str:string, context: stri
             if(dirs.length && dirs[0]==='*') {
                 if(dirs.substr(2) === str) return true
             }
-            if(isMatchKeymapPattern(dirs, nextContext)){
+            if(isMatchKeymapPattern(dirs, nextContext, isContain)){
                 return true
             }
         } else {
             // 全匹配
             if(dirs!=='' && dirs === nextContext) return true
             // context为dirs的子空间
-            if(context.indexOf(dirs)===0) return true
+            if(context.indexOf(dirs)===0 || nextContext.indexOf(dirs)===0) return true
             // 头匹配 1.剩余完全匹配，2.剩余到最近的'.'之间完全匹配
             if(dirs.indexOf(context)===0 && dirs[nextContext.length] ==='.') {
                 const left = dirs.substr(context.length)
@@ -162,7 +171,7 @@ export function ifSomeMatch(regList:string[], key: string, context: string):bool
     return false
 }
 
-export function isDeepSame(o1: any, o2: any, include?:string[], exclude?:string[], context?:string):boolean{
+export function isPartialSame(o1: any, o2: any, include?:string[], exclude?:string[], context?:string):boolean{
     if(o1 === o2) {
         return true
     }
@@ -178,7 +187,7 @@ export function isDeepSame(o1: any, o2: any, include?:string[], exclude?:string[
                 // 直接过滤掉了超过临界的情况
                 if(exclude && exclude.length && ifSomeMatch(exclude, i.toString(), context||'')) continue
 
-                if(!isDeepSame(o1[i], o2[i], include, exclude, (context?context+'.':'') + i)){
+                if(!isPartialSame(o1[i], o2[i], include, exclude, (context?context+'.':'') + i)){
                     return false
                 }
             }
@@ -191,7 +200,7 @@ export function isDeepSame(o1: any, o2: any, include?:string[], exclude?:string[
                 // 如果这个key不被包含，则跳过比较
                 if(exclude && exclude.length && ifSomeMatch(exclude, key, context||'')) continue
                 if(o1.hasOwnProperty(key)){
-                    if(!isDeepSame(o1[key], o2[key], include, exclude, (context?context+'.':'') + key)){
+                    if(!isPartialSame(o1[key], o2[key], include, exclude, (context?context+'.':'') + key)){
                         // 如果是匹配全等，那调用该处的上级递归就true了
                         return false
                     }
@@ -199,6 +208,15 @@ export function isDeepSame(o1: any, o2: any, include?:string[], exclude?:string[
             }
         }
         return true
+    } else {
+        // 已经是基础类型的值，没有再下层递归了，此处如果没有match到，则说明没有被include，估返回true
+        if(include && include.length){
+            if(isContained(include, context||'', '')){
+                return o1 === o2
+            } else {
+                return true
+            }
+        }
     }
     return false
 }

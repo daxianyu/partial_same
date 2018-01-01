@@ -1,1 +1,1 @@
-export { isDeepSame } from './src/deep_same'
+export { isPartialSame } from './src/deep_same'

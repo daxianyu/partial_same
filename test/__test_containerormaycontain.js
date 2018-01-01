@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var deep_same_1 = require("../src/deep_same");
+console.log(deep_same_1.isContained(['x.**.a'], '0', 'x.b') === false);
 console.log(deep_same_1.isContainedOrMayContain(['x.b.c.d.e'], 'd', 'x.b.c.d.e') === true);
 console.log(deep_same_1.isContainedOrMayContain(['x.b.*.d.e'], 'd', 'x.b.c.d.e') === true);
 console.log(deep_same_1.isContainedOrMayContain(['x.y', 'x.y.z'], 'x', '') === true);

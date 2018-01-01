@@ -1,7 +1,7 @@
 // /**
 import {isMatchWordPattern} from "../src/deep_same";
 
-console.log(isMatchWordPattern('a*x', 'aasadfasf')===true)
+console.log(isMatchWordPattern('a*x', 'aasadfasf')===false)
 console.log(isMatchWordPattern('*', 'a3')===true)
 console.log(isMatchWordPattern('a*', 'a3')===true)
 console.log(isMatchWordPattern('a*', 'aa3')===true)
