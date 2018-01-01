@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function isWildCharSame(reg, toCp) {
+function isMatchWordPattern(reg, toCp) {
     var regCursor = 0, cpCursor = 0;
     if (reg === toCp)
         return true;
@@ -19,7 +19,7 @@ function isWildCharSame(reg, toCp) {
             while (toCp[cpCursor] !== reg[regCursor + 1] && cpCursor < toCp.length) {
                 cpCursor++;
             }
-            if (isWildCharSame(reg.substr(regCursor + 1), toCp.substr(cpCursor))) {
+            if (isMatchWordPattern(reg.substr(regCursor + 1), toCp.substr(cpCursor))) {
                 return true;
             }
             else {
@@ -41,8 +41,8 @@ function isWildCharSame(reg, toCp) {
     }
     return false;
 }
-exports.isWildCharSame = isWildCharSame;
-function isWildSame(reg, toCp) {
+exports.isMatchWordPattern = isMatchWordPattern;
+function isMatchKeymapPattern(reg, toCp) {
     if (reg === '**')
         return true;
     var regList = reg.split('.');
@@ -53,7 +53,7 @@ function isWildSame(reg, toCp) {
             if (regList[regCursor] === '**') {
                 cpCursor++;
             }
-            else if (isWildCharSame(regList[regCursor], cpStrList[cpCursor])) {
+            else if (isMatchWordPattern(regList[regCursor], cpStrList[cpCursor])) {
                 cpCursor++;
                 regCursor++;
             }
@@ -71,8 +71,8 @@ function isWildSame(reg, toCp) {
     }
     return (cpCursor >= cpStrList.length || regCursor >= regList.length);
 }
-exports.isWildSame = isWildSame;
-function ifContained(arr, str, context) {
+exports.isMatchKeymapPattern = isMatchKeymapPattern;
+function isContainedOrMayContain(arr, str, context) {
     var nextContext = (context ? context + '.' : '') + str;
     for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
         var dirs = arr_1[_i];
@@ -83,7 +83,7 @@ function ifContained(arr, str, context) {
                 if (dirs.substr(2) === str)
                     return true;
             }
-            if (isWildSame(dirs, nextContext)) {
+            if (isMatchKeymapPattern(dirs, nextContext)) {
                 return true;
             }
         }
@@ -103,7 +103,7 @@ function ifContained(arr, str, context) {
     }
     return false;
 }
-exports.ifContained = ifContained;
+exports.isContainedOrMayContain = isContainedOrMayContain;
 function isValidReg(reg) {
     if (reg === undefined) {
         return true;
@@ -113,7 +113,7 @@ function isValidReg(reg) {
     }
     return true;
 }
-function isPatternImpl(regList, cpList) {
+function isPatternMatchedImpl(regList, cpList) {
     var regCursor = 0, cpCursor = 0;
     if (regList.length === 0 && cpList.length === 0)
         return true;
@@ -122,14 +122,14 @@ function isPatternImpl(regList, cpList) {
         if (regList[regCursor] === '**' && cpCursor <= cpList.length) {
             while (isValidReg(regList[regCursor + 1]) && regList[regCursor + 1] === '**')
                 regCursor++;
-            while (cpCursor < cpList.length && !isWildCharSame(regList[regCursor + 1], cpList[cpCursor])) {
+            while (cpCursor < cpList.length && !isMatchWordPattern(regList[regCursor + 1], cpList[cpCursor])) {
                 cpCursor++;
             }
             if (!regList[regCursor + 1])
                 return true;
             if (cpCursor === cpList.length)
                 return false;
-            if (isPatternImpl(regList.slice(regCursor + 1), cpList.slice(cpCursor))) {
+            if (isPatternMatchedImpl(regList.slice(regCursor + 1), cpList.slice(cpCursor))) {
                 return true;
             }
             else {
@@ -137,7 +137,7 @@ function isPatternImpl(regList, cpList) {
             }
         }
         if (regList[regCursor] !== '**') {
-            if (isWildCharSame(regList[regCursor], cpList[cpCursor])) {
+            if (isMatchWordPattern(regList[regCursor], cpList[cpCursor])) {
                 regCursor++;
                 cpCursor++;
                 if (regCursor === regList.length) {
@@ -151,26 +151,26 @@ function isPatternImpl(regList, cpList) {
     }
     return false;
 }
-function isPattern(reg, toCp) {
+function isPatternMatched(reg, toCp) {
     if (reg === '**')
         return true;
     if (reg === '' && toCp === '')
         return false;
     var regList = reg.split('.');
     var cpStrList = toCp.split('.');
-    return isPatternImpl(regList, cpStrList);
+    return isPatternMatchedImpl(regList, cpStrList);
 }
-exports.isPattern = isPattern;
-function ifMatch(regList, key, context) {
+exports.isPatternMatched = isPatternMatched;
+function ifSomeMatch(regList, key, context) {
     for (var _i = 0, regList_1 = regList; _i < regList_1.length; _i++) {
         var item = regList_1[_i];
-        if (isPattern(item, (context ? context + '.' : '') + key)) {
+        if (isPatternMatched(item, (context ? context + '.' : '') + key)) {
             return true;
         }
     }
     return false;
 }
-exports.ifMatch = ifMatch;
+exports.ifSomeMatch = ifSomeMatch;
 function isDeepSame(o1, o2, include, exclude, context) {
     if (o1 === o2) {
         return true;
@@ -184,9 +184,9 @@ function isDeepSame(o1, o2, include, exclude, context) {
             if (o1.length !== o2.length)
                 return false;
             for (var i = 0; i < o1.length; i++) {
-                if (include && include.length && !ifContained(include, i.toString(), context || ''))
+                if (include && include.length && !isContainedOrMayContain(include, i.toString(), context || ''))
                     continue;
-                if (exclude && exclude.length && ifMatch(exclude, i.toString(), context || ''))
+                if (exclude && exclude.length && ifSomeMatch(exclude, i.toString(), context || ''))
                     continue;
                 if (!isDeepSame(o1[i], o2[i], include, exclude, (context ? context + '.' : '') + i)) {
                     return false;
@@ -198,9 +198,9 @@ function isDeepSame(o1, o2, include, exclude, context) {
             var keys = allKeysRaw_1.filter(function (key, i) { return allKeysRaw_1.indexOf(key) === i; });
             for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                 var key = keys_1[_i];
-                if (include && include.length && !ifContained(include, key, context || ''))
+                if (include && include.length && !isContainedOrMayContain(include, key, context || ''))
                     continue;
-                if (exclude && exclude.length && ifMatch(exclude, key, context || ''))
+                if (exclude && exclude.length && ifSomeMatch(exclude, key, context || ''))
                     continue;
                 if (o1.hasOwnProperty(key)) {
                     if (!isDeepSame(o1[key], o2[key], include, exclude, (context ? context + '.' : '') + key)) {

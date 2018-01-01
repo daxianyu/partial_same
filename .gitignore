@@ -138,3 +138,6 @@ Temporary Items
 .apdisk
 
 *.map
+test/*.d.ts
+.idea
+

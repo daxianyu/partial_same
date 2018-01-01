@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var deep_same_1 = require("../src/deep_same");
+console.log(deep_same_1.isPatternMatched('a.**.x.**.j*j', 'a') === false);
+console.log(deep_same_1.isPatternMatched('a.**.x.**.j*j', 'a.jxj') === false);
+console.log(deep_same_1.isPatternMatched('a.**.x.**.j*j', 'a.b.x.c.jeej') === true);
+console.log(deep_same_1.isPatternMatched('', '') === false);
+console.log(deep_same_1.isPatternMatched('aa', '') === false);
+console.log(deep_same_1.isPatternMatched('**', '') === true);
+console.log(deep_same_1.isPatternMatched('a.**', 'a') === true);
+console.log(deep_same_1.isPatternMatched('a.**', 'a.b') === true);
+console.log(deep_same_1.isPatternMatched('a.**', 'a.b.c') === true);
+console.log(deep_same_1.isPatternMatched('a.**.b', 'a.b') === true);
+console.log(deep_same_1.isPatternMatched('a.**.b', 'a.b.c') === false);
+console.log(deep_same_1.isPatternMatched('a.**.**.**.b', 'a.b') === true);
+console.log(deep_same_1.isPatternMatched('a.**.**.**.b', 'a.c') === false);
+console.log(deep_same_1.isPatternMatched('a.**.**.**.b', 'a.b.c') === false);
+console.log(deep_same_1.isPatternMatched('a.**.b.**', 'a.b.c') === true);
+console.log(deep_same_1.isPatternMatched('a.**.b.**.d', 'a.b.d') === true);
+console.log(deep_same_1.isPatternMatched('a.**.b.**.d', 'a.b.c.d') === true);
+console.log(deep_same_1.isPatternMatched('a.**.b.**.d', 'a.c.d') === false);
+//# sourceMappingURL=__test_patternmatched.js.map
